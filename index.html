@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track your fishing locations and experiences with an interactive map. Log catches, weather conditions, and build your personal fishing journal.">
+    <meta name="keywords" content="fishing log, fishing tracker, fishing journal, fishing locations, fishing map">
+    <meta name="author" content="Fishing Log App">
+    <title>Fishing Log - Track Your Fishing Experiences</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <h1 class="logo">🎣 Fishing Log</h1>
+                <ul class="nav-menu">
+                    <li><a href="#" class="nav-link active" data-page="map">Map</a></li>
+                    <li><a href="#" class="nav-link" data-page="history">History</a></li>
+                    <li><a href="#" class="nav-link" data-page="stats">Statistics</a></li>
+                </ul>
+                <button class="menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="map-view" class="view active">
+            <div class="map-container">
+                <div id="map"></div>
+                <button class="btn btn-primary add-location-btn" id="addLocationBtn" aria-label="Add fishing location">
+                    + Add Location
+                </button>
+            </div>
+            
+            <aside class="sidebar" aria-label="Recent fishing entries">
+                <h2>Recent Entries</h2>
+                <div id="recent-entries" class="entries-list" role="list" aria-live="polite">
+                    <p class="empty-message" role="status">No entries yet. Click on the map to add your first fishing location!</p>
+                </div>
+            </aside>
+        </section>
+
+        <section id="history-view" class="view">
+            <div class="history-container">
+                <h2>Fishing History</h2>
+                <div class="filter-controls">
+                    <input type="text" id="searchInput" placeholder="Search locations..." class="search-input">
+                    <select id="speciesFilter" class="filter-select">
+                        <option value="">All Species</option>
+                    </select>
+                    <input type="date" id="dateFilter" class="filter-date">
+                </div>
+                <div id="history-entries" class="entries-list" role="list" aria-live="polite">
+                    <p class="empty-message" role="status">No fishing entries found.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="stats-view" class="view">
+            <div class="stats-container">
+                <h2>Statistics</h2>
+                <div id="stats-content" class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Trips</h3>
+                        <p class="stat-value" id="total-trips">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Fish Caught</h3>
+                        <p class="stat-value" id="total-fish">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Most Fished Location</h3>
+                        <p class="stat-value" id="most-fished">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Favorite Species</h3>
+                        <p class="stat-value" id="favorite-species">-</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="locationModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal" aria-label="Close modal">&times;</button>
+            <h2 id="modalTitle">Add Fishing Location</h2>
+            <form id="locationForm" aria-label="Fishing location entry form">
+                <div class="form-group">
+                    <label for="locationName">Location Name <span class="required" aria-label="required">*</span></label>
+                    <input type="text" id="locationName" name="locationName" required aria-required="true" aria-describedby="locationName-desc">
+                    <span id="locationName-desc" class="sr-only">Enter a name for this fishing location</span>
+                </div>
+                <div class="form-group">
+                    <label for="fishingDate">Date <span class="required" aria-label="required">*</span></label>
+                    <input type="date" id="fishingDate" name="fishingDate" required aria-required="true" aria-describedby="fishingDate-desc">
+                    <span id="fishingDate-desc" class="sr-only">Select the date of your fishing trip</span>
+                </div>
+                <div class="form-group">
+                    <label for="fishSpecies">Fish Species</label>
+                    <input type="text" id="fishSpecies" name="fishSpecies" placeholder="e.g., Bass, Trout" aria-describedby="fishSpecies-desc">
+                    <span id="fishSpecies-desc" class="sr-only">Enter the species of fish caught</span>
+                </div>
+                <div class="form-group">
+                    <label for="fishQuantity">Quantity</label>
+                    <input type="number" id="fishQuantity" name="fishQuantity" min="0" value="0" aria-describedby="fishQuantity-desc">
+                    <span id="fishQuantity-desc" class="sr-only">Enter the number of fish caught</span>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" name="notes" rows="4" placeholder="Weather conditions, techniques used, etc." aria-describedby="notes-desc"></textarea>
+                    <span id="notes-desc" class="sr-only">Add any additional notes about your fishing trip</span>
+                </div>
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
+
