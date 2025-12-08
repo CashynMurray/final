@@ -53,13 +53,25 @@
 
         <section id="history-view" class="view">
             <div class="history-container">
-                <h2>Fishing History</h2>
+                <div class="history-header">
+                    <h2>Fishing History</h2>
+                    <div class="data-actions">
+                        <button class="btn btn-secondary" id="exportBtn">Export Data</button>
+                        <button class="btn btn-secondary" id="importBtn">Import Data</button>
+                        <input type="file" id="importInput" accept=".json" style="display: none;">
+                    </div>
+                </div>
                 <div class="filter-controls">
                     <input type="text" id="searchInput" placeholder="Search locations..." class="search-input">
-                    <select id="speciesFilter" class="filter-select">
-                        <option value="">All Species</option>
-                    </select>
-                    <input type="date" id="dateFilter" class="filter-date">
+                    <div style="flex: 1; min-width: 150px;">
+                        <select id="speciesFilter" class="filter-select" multiple size="3" title="Hold Ctrl/Cmd to select multiple species">
+                            <option value="Rainbow Trout">Rainbow Trout</option>
+                            <option value="Brown Trout">Brown Trout</option>
+                            <option value="Cutthroat">Cutthroat</option>
+                        </select>
+                        <small id="speciesFilterHint" style="display: block; margin-top: 0.25rem; color: #6B7280; font-size: 12px;">Hold Ctrl/Cmd to select multiple</small>
+                    </div>
+                    <input type="date" id="dateFilter" class="filter-date" placeholder="Filter by date">
                 </div>
                 <div id="history-entries" class="entries-list" role="list" aria-live="polite">
                     <p class="empty-message" role="status">No fishing entries found.</p>
@@ -106,6 +118,7 @@
                     <label for="fishingDate">Date <span class="required" aria-label="required">*</span></label>
                     <input type="date" id="fishingDate" name="fishingDate" required aria-required="true" aria-describedby="fishingDate-desc">
                     <span id="fishingDate-desc" class="sr-only">Select the date of your fishing trip</span>
+                    <small class="form-hint">Weather data will be fetched automatically for this date</small>
                 </div>
                 <div class="form-group">
                     <label for="fishSpecies">Fish Species</label>
@@ -132,10 +145,19 @@
         </div>
     </div>
 
+    <div id="locationDetailsModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeLocationDetails()" aria-label="Close modal">&times;</button>
+            <div id="locationDetailsContent"></div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
+
+
 

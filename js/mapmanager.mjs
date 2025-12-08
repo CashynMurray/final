@@ -6,8 +6,8 @@ class MapManager {
     this.onMapClickCallback = null;
   }
 
-  init(defaultLat = 40.7128, defaultLng = -74.0060) {
-    this.map = L.map(this.mapContainerId).setView([defaultLat, defaultLng], 10);
+  init(defaultLat = 44.5, defaultLng = -114.5) {
+    this.map = L.map(this.mapContainerId).setView([defaultLat, defaultLng], 7);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
@@ -76,4 +76,6 @@ class MapManager {
 }
 
 export default MapManager;
+
+
 
